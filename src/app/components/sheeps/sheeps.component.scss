@@ -1,0 +1,85 @@
+/* app.component.scss */
+.space-background {
+  min-height: 100vh;
+  background-color: #121212;
+  background-image:
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 5px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 4px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 5px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+}
+
+.app-toolbar {
+  background: linear-gradient(90deg, #4527A0, #7B1FA2);
+  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.add-button {
+  background-color: #9C27B0;
+  color: white;
+}
+
+.sheep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 48px 0;
+
+  p {
+    margin-top: 16px;
+    color: #CE93D8;
+  }
+}
+
+.no-results {
+  text-align: center;
+  padding: 48px 0;
+
+  .no-results-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #9C27B0;
+  }
+
+  p {
+    color: #CE93D8;
+    font-size: 18px;
+    margin-top: 16px;
+  }
+}
