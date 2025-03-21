@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, signal} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {
   MatCard,
@@ -35,7 +35,7 @@ import {NgIf} from '@angular/common';
           <mat-icon>
             favorite
           </mat-icon>
-          LIKE ({{ sheep.likes }})
+          LIKE ({{ likes() }})
         </button>
         <div>
           <mat-icon class="icon">
@@ -65,11 +65,13 @@ export class SheepCardComponent {
   @Input({required: true})
   sheep!: Sheep;
 
+  likes = signal<number>(0);
+
 
   constructor() {
   }
 
   likeSheep() {
-
+    this.likes.update(v => v+1);
   }
 }
