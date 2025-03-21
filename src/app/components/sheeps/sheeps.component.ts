@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, OnInit, signal, viewChildren} from '@angular/core';
+import {Component, computed, effect, inject, linkedSignal, OnInit, signal, viewChildren} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SheepService} from '../../services/sheep.service';
 import {AddSheepDialogComponent} from '../add-sheep-dialog/add-sheep-dialog.component';
@@ -84,8 +84,8 @@ export class SheepsComponent implements OnInit {
   dialog = inject(MatDialog);
 
   title = 'Sheep in Space';
-  sheeps = toSignal(this.sheepService.getSheep());
-  filteredSheeps = computed(() =>
+  sheeps = toSignal(this.sheepService.getSheep(), {initialValue:[]});
+  filteredSheeps = linkedSignal(() =>
     this.sheeps()?.filter( sheep => sheep.name.toUpperCase().includes(this.searchText().toUpperCase()) )
   );
   searchText = signal<string>('');
@@ -114,7 +114,7 @@ export class SheepsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        //TODO add sheep
+        this.filteredSheeps.update( v => [...v, result]);
       }
     });
   }
