@@ -1,4 +1,4 @@
-import {Component, effect, inject, Input, signal} from '@angular/core';
+import {Component, effect, inject, input, Input, signal} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {
   MatCard,
@@ -26,10 +26,10 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   ],
   template: `
     <mat-card class="sheep-card">
-      <mat-card-title><h2>{{ sheep.name }}</h2></mat-card-title>
-      <img mat-card-image [src]="sheep.imageUrl" alt="{{ sheep.name }}">
+      <mat-card-title><h2>{{ sheep().name }}</h2></mat-card-title>
+      <img mat-card-image [src]="sheep().imageUrl" alt="{{ sheep().name }}">
       <mat-card-content>
-        <p>{{ sheep.description }}</p>
+        <p>{{ sheep().description }}</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button color="accent" (click)="likeSheep()">
@@ -40,7 +40,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
         </button>
         <div>
           <mat-icon class="icon">
-            @switch (sheep.category) {
+            @switch (sheep().category) {
 
               @case ('military') {
                 military_tech
@@ -63,8 +63,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrl: './sheep-card.component.scss'
 })
 export class SheepCardComponent {
-  @Input({required: true})
-  sheep!: Sheep;
+  sheep = input.required<Sheep>();
 
   likes = signal<number>(0);
   snack = inject(MatSnackBar);
