@@ -13,6 +13,7 @@ import {MatTooltip} from '@angular/material/tooltip';
 import {MatInput} from '@angular/material/input';
 import {SheepCardComponent} from '../sheep-card/sheep-card.component';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sheep',
@@ -49,7 +50,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 
         <div *ngIf="!isLoading" class="sheep-grid">
           @for(sheep of filteredSheeps(); track sheep.id){
-            <app-sheep-card [sheep]="sheep"/>
+            <app-sheep-card [sheep]="sheep" (likesChanged)="onLikesChanged($event)"/>
           } @empty {
             <div class="no-results">
               <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
@@ -89,6 +90,7 @@ export class SheepsComponent implements OnInit {
   );
   searchText = signal<string>('');
   isLoading = false;
+  snack = inject(MatSnackBar);
 
   constructor() {
   }
@@ -108,6 +110,12 @@ export class SheepsComponent implements OnInit {
         //TODO add sheep
       }
     });
+  }
+
+  onLikesChanged(likes : number){
+    if(likes > 0) {
+      this.snack.open(`An awesome sheep has been liked ${likes} times`,'',{duration:2000});
+    }
   }
 
   refreshSheep() {
