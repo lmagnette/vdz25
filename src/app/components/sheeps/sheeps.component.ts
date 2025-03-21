@@ -123,7 +123,7 @@ export class SheepsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.filteredSheeps.update(v => [...v, result]);
+        this.filteredSheeps.update(v => [...v || [], result]);
       }
     });
   }
