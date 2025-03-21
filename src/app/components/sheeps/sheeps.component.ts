@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SheepService} from '../../services/sheep.service';
 import {AddSheepDialogComponent} from '../add-sheep-dialog/add-sheep-dialog.component';
@@ -50,7 +50,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 
         <div *ngIf="!isLoading" class="sheep-grid">
           @for(sheep of filteredSheeps(); track sheep.id){
-            <app-sheep-card [sheep]="sheep" (likesChanged)="onLikesChanged($event)"/>
+            <app-sheep-card [sheep]="sheep" [(likes)]="likes"/>
           } @empty {
             <div class="no-results">
               <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
@@ -91,11 +91,16 @@ export class SheepsComponent implements OnInit {
   searchText = signal<string>('');
   isLoading = false;
   snack = inject(MatSnackBar);
+  likes = signal<number>(0);
 
   constructor() {
+    effect(() => {
+      this.onLikesChanged(this.likes());
+    });
   }
 
   ngOnInit() {
+
   }
 
 
