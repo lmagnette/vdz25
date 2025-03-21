@@ -49,9 +49,9 @@ import {SheepCardComponent} from '../sheep-card/sheep-card.component';
         </div>
 
         <div *ngIf="!isLoading" class="sheep-grid">
-          <ng-container *ngFor="let sheep of sheep$ | async">
+          @for(sheep of sheep$ |async; track sheep.id){
             <app-sheep-card [sheep]="sheep"/>
-          </ng-container>
+          }
         </div>
 
         <div *ngIf="!isLoading && (sheep$ | async)?.length === 0" class="no-results">
