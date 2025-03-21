@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal, viewChildren} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SheepService} from '../../services/sheep.service';
 import {AddSheepDialogComponent} from '../add-sheep-dialog/add-sheep-dialog.component';
@@ -93,6 +93,8 @@ export class SheepsComponent implements OnInit {
   snack = inject(MatSnackBar);
   likes = signal<number>(0);
 
+  cards = viewChildren<SheepCardComponent>(SheepCardComponent);
+
   constructor() {
     effect(() => {
       this.onLikesChanged(this.likes());
@@ -119,7 +121,7 @@ export class SheepsComponent implements OnInit {
 
   onLikesChanged(likes : number){
     if(likes > 0) {
-      this.snack.open(`An awesome sheep has been liked ${likes} times`,'',{duration:2000});
+      this.snack.open(`An awesome sheep has been liked ${likes} times with ${this.cards().length}`,'',{duration:2000});
     }
   }
 
