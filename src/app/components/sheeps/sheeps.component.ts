@@ -17,7 +17,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sheep',
-  template:`
+  template: `
     <div class="space-background">
       <mat-toolbar color="primary" class="app-toolbar">
         <span>{{ title }}</span>
@@ -39,25 +39,34 @@ import {MatSnackBar} from '@angular/material/snack-bar';
           </mat-form-field>
 
           <button mat-raised-button color="accent" (click)="openAddSheepDialog()" class="add-button">
-            <mat-icon>add</mat-icon> Add New Sheep
+            <mat-icon>add</mat-icon>
+            Add New Sheep
           </button>
         </div>
 
-        <div *ngIf="isLoading" class="loading-container">
-          <mat-spinner></mat-spinner>
-          <p>Loading cosmic sheep...</p>
-        </div>
-
-        <div *ngIf="!isLoading" class="sheep-grid">
-          @for(sheep of filteredSheeps(); track sheep.id){
-            <app-sheep-card [sheep]="sheep" [(likes)]="likes"/>
-          } @empty {
-            <div class="no-results">
-              <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
-              <p>No space sheep found. Try a different search or add a new one!</p>
-            </div>
-          }
-        </div>
+        @if (sheeps.isLoading()) {
+          <div class="loading-container">
+            <mat-spinner></mat-spinner>
+            <p>Loading cosmic sheep...</p>
+          </div>
+        } @else {
+          <div class="sheep-grid">
+            @for (sheep of filteredSheeps(); track sheep.id) {
+              <app-sheep-card [sheep]="sheep" [(likes)]="likes"/>
+            } @empty {
+              <div class="no-results">
+                <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
+                <p>No space sheep found. Try a different search or add a new one!</p>
+              </div>
+            }
+          </div>
+        }
+        @if(sheeps.error()) {
+          <div class="no-results">
+            <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
+            <p>Something went wrong</p>
+          </div>
+        }
       </div>
     </div>
   `,
@@ -84,9 +93,9 @@ export class SheepsComponent implements OnInit {
   dialog = inject(MatDialog);
 
   title = 'Sheep in Space';
-  sheeps = toSignal(this.sheepService.getSheep(), {initialValue:[]});
+  sheeps = this.sheepService.getSheep();
   filteredSheeps = linkedSignal(() =>
-    this.sheeps()?.filter( sheep => sheep.name.toUpperCase().includes(this.searchText().toUpperCase()) )
+    this.sheeps.value()?.filter(sheep => sheep.name.toUpperCase().includes(this.searchText().toUpperCase()))
   );
   searchText = signal<string>('');
   isLoading = false;
@@ -114,17 +123,18 @@ export class SheepsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.filteredSheeps.update( v => [...v, result]);
+        this.filteredSheeps.update(v => [...v, result]);
       }
     });
   }
 
-  onLikesChanged(likes : number){
-    if(likes > 0) {
-      this.snack.open(`An awesome sheep has been liked ${likes} times with ${this.cards().length}`,'',{duration:2000});
+  onLikesChanged(likes: number) {
+    if (likes > 0) {
+      this.snack.open(`An awesome sheep has been liked ${likes} times with ${this.cards().length}`, '', {duration: 2000});
     }
   }
 
   refreshSheep() {
+    this.sheeps.reload();
   }
 }
