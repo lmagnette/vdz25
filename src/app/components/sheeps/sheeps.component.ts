@@ -1,7 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Observable} from 'rxjs';
-import {Sheep} from '../../models/sheep';
 import {SheepService} from '../../services/sheep.service';
 import {AddSheepDialogComponent} from '../add-sheep-dialog/add-sheep-dialog.component';
 import {MatButton, MatIconButton} from '@angular/material/button';
@@ -9,11 +7,12 @@ import {MatIcon} from '@angular/material/icon';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {NgIf} from '@angular/common';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatInput} from '@angular/material/input';
 import {SheepCardComponent} from '../sheep-card/sheep-card.component';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-sheep',
@@ -32,7 +31,7 @@ import {SheepCardComponent} from '../sheep-card/sheep-card.component';
           <mat-form-field appearance="outline" class="search-field">
             <mat-label>Search sheep by name</mat-label>
             <input matInput [(ngModel)]="searchText">
-            <button *ngIf="searchText" matSuffix mat-icon-button aria-label="Clear" (click)="searchText=''">
+            <button *ngIf="searchText" matSuffix mat-icon-button aria-label="Clear" (click)="searchText.set('')">
               <mat-icon>close</mat-icon>
             </button>
             <mat-icon matPrefix>search</mat-icon>
@@ -49,14 +48,14 @@ import {SheepCardComponent} from '../sheep-card/sheep-card.component';
         </div>
 
         <div *ngIf="!isLoading" class="sheep-grid">
-          @for(sheep of sheep$ |async; track sheep.id){
+          @for(sheep of filteredSheeps(); track sheep.id){
             <app-sheep-card [sheep]="sheep"/>
+          } @empty {
+            <div class="no-results">
+              <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
+              <p>No space sheep found. Try a different search or add a new one!</p>
+            </div>
           }
-        </div>
-
-        <div *ngIf="!isLoading && (sheep$ | async)?.length === 0" class="no-results">
-          <mat-icon class="no-results-icon">sentiment_dissatisfied</mat-icon>
-          <p>No space sheep found. Try a different search or add a new one!</p>
         </div>
       </div>
     </div>
@@ -72,10 +71,9 @@ import {SheepCardComponent} from '../sheep-card/sheep-card.component';
     MatToolbar,
     MatTooltip,
     MatInput,
-    NgForOf,
     MatLabel,
     SheepCardComponent,
-    AsyncPipe,
+
   ],
   styleUrls: ['./sheeps.component.scss']
 })
@@ -85,24 +83,19 @@ export class SheepsComponent implements OnInit {
   dialog = inject(MatDialog);
 
   title = 'Sheep in Space';
-  sheep$: Observable<Sheep[]>;
-  searchText = '';
+  sheeps = toSignal(this.sheepService.getSheep());
+  filteredSheeps = computed(() =>
+    this.sheeps()?.filter( sheep => sheep.name.toUpperCase().includes(this.searchText().toUpperCase()) )
+  );
+  searchText = signal<string>('');
   isLoading = false;
 
   constructor() {
-    this.sheep$ = this.sheepService.getSheep();
   }
 
   ngOnInit() {
-    this.loadSheep();
   }
 
-  loadSheep() {
-    this.isLoading = true;
-    this.sheep$.subscribe(sheep => {
-      this.isLoading = false;
-    });
-  }
 
   openAddSheepDialog() {
     const dialogRef = this.dialog.open(AddSheepDialogComponent, {
@@ -118,6 +111,5 @@ export class SheepsComponent implements OnInit {
   }
 
   refreshSheep() {
-    this.loadSheep();
   }
 }
