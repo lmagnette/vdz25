@@ -1,15 +1,8 @@
-import {Component, effect, EventEmitter, inject, input, Input, model, output, signal} from '@angular/core';
+import {Component, effect, inject, input, model} from '@angular/core';
 import {MatButton} from "@angular/material/button";
-import {
-  MatCard,
-  MatCardActions,
-  MatCardContent,
-  MatCardImage,
-  MatCardTitle
-} from "@angular/material/card";
+import {MatCard, MatCardActions, MatCardContent, MatCardImage, MatCardTitle} from "@angular/material/card";
 import {MatIcon} from "@angular/material/icon";
 import {Sheep} from '../../models/sheep';
-import {NgIf} from '@angular/common';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -22,7 +15,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
     MatCardImage,
     MatCardTitle,
     MatIcon,
-    NgIf
   ],
   template: `
     <mat-card class="sheep-card">
